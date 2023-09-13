@@ -1,8 +1,3 @@
-Simple Routing Using react router dom
-First install - npm i -D react-router-dom
-
-
-Then Simple Routing in Body Component.
 import React from 'react'
 import Login from './Login'
 import Browse from './Browse'
