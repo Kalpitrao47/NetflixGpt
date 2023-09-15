@@ -1,14 +1,16 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { checkValidData } from "../utils/validate";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../utils/firebase"
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
 
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
@@ -26,19 +28,46 @@ const Login = () => {
     //Sign In Sign Up Logic
     if (!isSignInForm) {
       //Sign Up Logic
-      createUserWithEmailAndPassword(auth, email, password)
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: email.current.value, photoURL: "https://example.com/jane-q-user/profile.jpg"
+          }).then(() => {
+            // Profile updated!
+            // ...
+          }).catch((error) => {
+            setErrorMessage(error.message)
+            // An error occurred
+            // ...
+          });
+          console.log(user);
+          navigate("/browse")
           // ...
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
           // ..
         });
     } else {
       //Sign In Logic
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user);
+    navigate("/browse")
+
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setErrorMessage(errorCode + "_" + errorMessage)
+  });
     }
   };
 
