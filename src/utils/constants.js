@@ -22,3 +22,5 @@ export const SUPPORTED_LANGUAGES = [
     identifier:"spanish", name:"Spanish"
   }
 ]
+
+export const OPENAI_KEY = "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"
